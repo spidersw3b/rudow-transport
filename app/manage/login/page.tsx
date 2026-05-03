@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
@@ -30,9 +30,14 @@ function LoginForm() {
       setError("Invalid email or password.");
       return;
     }
-    if (res?.url) {
-      window.location.href = res.url;
+    const session = await getSession();
+    const isAdmin = session?.user?.role === "admin";
+    let next = res?.url ?? callbackUrl;
+    if (isAdmin) {
+      next =
+        callbackUrl.startsWith("/admin") ? callbackUrl : "/admin/dashboard";
     }
+    window.location.href = next;
   }
 
   return (
@@ -41,13 +46,18 @@ function LoginForm() {
         <div className="flex flex-col items-center text-center">
           <RudowTransportLogo compact className="mx-auto h-10 w-full max-w-[220px]" />
           <p className="mt-5 font-display text-sm font-bold uppercase tracking-[0.2em] text-rt-text-mid">
-            Customer portal
+            Customer and staff sign-in
+          </p>
+          <p className="mt-2 max-w-sm text-center font-body text-xs text-rt-text-mid">
+            Same login for customers and administrators. Admins are sent to the admin console after
+            signing in.
           </p>
         </div>
         {err === "AdminOnly" ? (
           <p className="mt-4 rounded-sm bg-badge-orange/15 px-3 py-2 text-center text-sm text-orange-900">
-            That area is restricted to administrators. Customer accounts can use the portal after
-            signing in here.
+            That area is for administrators only. Sign in below with your{" "}
+            <strong>admin email and password</strong> (same page as customers) — you will be routed
+            to the admin console automatically.
           </p>
         ) : null}
         {err === "Configuration" ? (

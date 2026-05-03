@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { LogIn, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { RudowTransportLogo } from "./RudowTransportLogo";
 
@@ -66,9 +66,17 @@ export function MobileMenu() {
                 );
               })}
               <Link
+                href="/manage/login"
+                onClick={() => setOpen(false)}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-sm border-2 border-black px-5 py-3 font-body text-sm font-semibold text-black"
+              >
+                <LogIn className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+                Login
+              </Link>
+              <Link
                 href="/contact"
                 onClick={() => setOpen(false)}
-                className="mt-4 inline-flex w-full items-center justify-center rounded-sm bg-rt-blue px-5 py-3 font-body text-sm font-bold uppercase tracking-wide text-white"
+                className="mt-2 inline-flex w-full items-center justify-center rounded-sm bg-rt-blue px-5 py-3 font-body text-sm font-bold uppercase tracking-wide text-white"
               >
                 GET QUOTE
               </Link>

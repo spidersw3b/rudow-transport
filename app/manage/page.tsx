@@ -2,6 +2,7 @@
 
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CustomerRequestsTable } from "@/components/customer/CustomerRequestsTable";
 import { CustomerStatCards } from "@/components/customer/CustomerStatCards";
@@ -12,6 +13,7 @@ import type { TransportRequest } from "@/types";
 
 export default function ManageDashboardPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [rows, setRows] = useState<TransportRequest[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [active, setActive] = useState<TransportRequest | null>(null);
@@ -23,8 +25,14 @@ export default function ManageDashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (status === "authenticated") void load();
-  }, [status, load]);
+    if (status === "authenticated" && session?.user?.role !== "admin") void load();
+  }, [status, session?.user?.role, load]);
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role === "admin") {
+      router.replace("/admin/dashboard");
+    }
+  }, [status, session?.user?.role, router]);
 
   const stats = useMemo(() => {
     return {
@@ -40,6 +48,15 @@ export default function ManageDashboardPage() {
       <div className="min-h-screen bg-rt-navy-light">
         <SiteNav />
         <p className="p-8 text-sm text-rt-text-mid">Loading…</p>
+      </div>
+    );
+  }
+
+  if (status === "authenticated" && session?.user?.role === "admin") {
+    return (
+      <div className="min-h-screen bg-rt-navy-light">
+        <SiteNav />
+        <p className="p-8 text-sm text-rt-text-mid">Opening admin console…</p>
       </div>
     );
   }
