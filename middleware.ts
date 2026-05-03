@@ -1,6 +1,12 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
 
+/**
+ * Must pass the same `secret` and `pages` as NextAuth or middleware cannot decode
+ * the session token and will treat unauthenticated users incorrectly. Missing
+ * `NEXTAUTH_SECRET` triggers a Configuration error (see NO_SECRET in next-auth).
+ */
 export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
@@ -18,6 +24,11 @@ export default withAuth(
     return NextResponse.next();
   },
   {
+    secret: authOptions.secret,
+    pages: {
+      signIn: "/manage/login",
+      error: "/manage/login",
+    },
     callbacks: {
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname;
@@ -34,5 +45,10 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/manage/:path*", "/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/manage",
+    // All /manage/* except login & signup (so public auth pages skip JWT / NO_SECRET edge)
+    "/manage/((?!login|signup).*)",
+  ],
 };

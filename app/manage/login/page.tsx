@@ -50,6 +50,13 @@ function LoginForm() {
             signing in here.
           </p>
         ) : null}
+        {err === "Configuration" ? (
+          <p className="mt-4 rounded-sm border border-badge-red/30 bg-badge-red/10 px-3 py-2 text-center text-sm text-red-900">
+            Auth is misconfigured: set <strong>NEXTAUTH_SECRET</strong> (e.g.{" "}
+            <code className="rounded bg-white/80 px-1">openssl rand -base64 32</code>) and{" "}
+            <strong>NEXTAUTH_URL</strong> to your site URL (e.g. <code className="rounded bg-white/80 px-1">https://your-domain.com</code> on Vercel). Then redeploy.
+          </p>
+        ) : null}
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <div>
