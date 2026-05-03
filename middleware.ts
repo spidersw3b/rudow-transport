@@ -1,11 +1,10 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
 
 /**
- * Must pass the same `secret` and `pages` as NextAuth or middleware cannot decode
- * the session token and will treat unauthenticated users incorrectly. Missing
- * `NEXTAUTH_SECRET` triggers a Configuration error (see NO_SECRET in next-auth).
+ * Do not import `authOptions` here — that pulls bcrypt/Supabase into the Edge
+ * middleware bundle and can break sign-in. Pass `secret` / `pages` explicitly
+ * (same values as `lib/auth.ts`). Missing `NEXTAUTH_SECRET` → Configuration error.
  */
 export default withAuth(
   function middleware(req) {
@@ -24,7 +23,7 @@ export default withAuth(
     return NextResponse.next();
   },
   {
-    secret: authOptions.secret,
+    secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
     pages: {
       signIn: "/manage/login",
       error: "/manage/login",
