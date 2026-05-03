@@ -4,6 +4,7 @@ import { getSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
+import { AuthDeploymentBanner } from "@/components/auth/AuthDeploymentBanner";
 import { RudowTransportLogo } from "@/components/layout/RudowTransportLogo";
 
 function LoginForm() {
@@ -57,6 +58,7 @@ function LoginForm() {
             signing in.
           </p>
         </div>
+        <AuthDeploymentBanner />
         {err === "AdminOnly" ? (
           <p className="mt-4 rounded-sm bg-badge-orange/15 px-3 py-2 text-center text-sm text-orange-900">
             That area is for administrators only. Sign in below with your{" "}

@@ -1,5 +1,6 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
+import { getNextAuthSecret } from "@/lib/server-config";
 
 /**
  * Do not import `authOptions` here — that pulls bcrypt/Supabase into the Edge
@@ -23,7 +24,7 @@ export default withAuth(
     return NextResponse.next();
   },
   {
-    secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+    secret: getNextAuthSecret(),
     pages: {
       signIn: "/manage/login",
       error: "/manage/login",

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { getAuthEnvIssues, getNextAuthSecret } from "@/lib/server-config";
 
 /**
  * GET /api/health/auth — which auth-related env vars are set (no secret values).
@@ -8,11 +9,11 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 export async function GET(req: Request) {
   const probe = new URL(req.url).searchParams.get("probe") === "1";
 
+  const issues = getAuthEnvIssues();
+
   const env = {
     NEXTAUTH_URL: Boolean(process.env.NEXTAUTH_URL?.trim()),
-    NEXTAUTH_OR_AUTH_SECRET: Boolean(
-      (process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET)?.trim()
-    ),
+    NEXTAUTH_OR_AUTH_SECRET: Boolean(getNextAuthSecret()),
     NEXT_PUBLIC_SUPABASE_URL: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()),
     SUPABASE_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()),
   };
@@ -46,5 +47,11 @@ export async function GET(req: Request) {
     }
   }
 
-  return NextResponse.json({ ok: true, env, supabaseUsersProbe });
+  return NextResponse.json({
+    ok: true,
+    env,
+    issues,
+    configured: issues.length === 0,
+    supabaseUsersProbe,
+  });
 }

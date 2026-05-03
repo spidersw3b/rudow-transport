@@ -2,6 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { getNextAuthSecret } from "@/lib/server-config";
 import type { UserRole } from "@/types";
 
 export const authOptions: NextAuthOptions = {
@@ -85,5 +86,5 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+  secret: getNextAuthSecret(),
 };

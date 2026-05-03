@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
+import { AuthDeploymentBanner } from "@/components/auth/AuthDeploymentBanner";
 import { RudowTransportLogo } from "@/components/layout/RudowTransportLogo";
 
 const schema = z
@@ -41,8 +42,18 @@ export default function ManageSignupPage() {
           password: parsed.data.password,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Signup failed");
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg =
+          data?.code === "SUPABASE_ENV_MISSING" && typeof data?.error === "string"
+            ? data.error
+            : typeof data?.error === "string"
+              ? data.error
+              : res.status === 503
+                ? "Sign-up is temporarily unavailable (server configuration)."
+                : "Signup failed";
+        throw new Error(msg);
+      }
 
       const sign = await signIn("credentials", {
         email: parsed.data.email,
@@ -68,6 +79,7 @@ export default function ManageSignupPage() {
             Create customer account
           </p>
         </div>
+        <AuthDeploymentBanner />
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
           <input

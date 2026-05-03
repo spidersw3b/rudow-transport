@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { isSupabaseServiceConfigured, SUPABASE_UNAVAILABLE_MESSAGE } from "@/lib/server-config";
 
 const signupSchema = z.object({
   name: z.string().min(1),
@@ -19,6 +20,14 @@ export async function POST(req: Request) {
     }
 
     const { name, phone, email, password } = parsed.data;
+
+    if (!isSupabaseServiceConfigured()) {
+      return NextResponse.json(
+        { error: SUPABASE_UNAVAILABLE_MESSAGE, code: "SUPABASE_ENV_MISSING" },
+        { status: 503 }
+      );
+    }
+
     const supabase = getSupabaseAdmin();
 
     const { data: existing } = await supabase
