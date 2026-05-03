@@ -23,7 +23,7 @@ export function SiteNav() {
           href="/"
           className="block shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-rt-navy focus-visible:ring-offset-2"
         >
-          <RudowTransportLogo />
+          <RudowTransportLogo priority />
         </Link>
 
         <nav className="hidden flex-1 justify-center gap-8 lg:flex">

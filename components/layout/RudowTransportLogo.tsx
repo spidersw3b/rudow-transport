@@ -1,6 +1,10 @@
+"use client";
+
+import Image from "next/image";
+import { useState } from "react";
+
 /**
- * Rudow Transportation — vector lockup (transparent SVG).
- * Navy #0a3061, silver #a3abb8, white motion accent. Matches supplied brand artwork.
+ * Raster brand lockup in `public/images/`. SVG below is fallback if the file is missing.
  */
 export const RUDOW_TRANSPORT_LOGO = "/images/rudow-transportation-logo.png";
 
@@ -8,12 +12,20 @@ const NAVY = "#0a3061";
 const SILVER = "#a3abb8";
 const SWOOSH = "#f8fafc";
 
+const LOGO_NATURAL_W = 1124;
+const LOGO_NATURAL_H = 332;
+
+const logoImgClass =
+  "block h-9 w-auto max-w-[230px] shrink-0 object-contain object-left md:h-10 md:max-w-[280px]";
+
 type RudowTransportLogoProps = {
   className?: string;
   compact?: boolean;
+  /** Set true in header for faster LCP (optional). */
+  priority?: boolean;
 };
 
-export function RudowTransportLogo({ className = "", compact = false }: RudowTransportLogoProps) {
+function RudowTransportLogoSvg({ className = "", compact = false }: RudowTransportLogoProps) {
   const vbW = compact ? 288 : 308;
   const vbH = compact ? 40 : 46;
   const rudowSize = compact ? 21 : 25;
@@ -26,14 +38,13 @@ export function RudowTransportLogo({ className = "", compact = false }: RudowTra
   return (
     <svg
       viewBox={`0 0 ${vbW} ${vbH}`}
-      className={`block h-9 w-auto max-w-[230px] shrink-0 md:h-10 md:max-w-[280px] ${className}`.trim()}
+      className={`${logoImgClass} ${className}`.trim()}
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       aria-label="Rudow Transportation"
     >
       <title>Rudow Transportation</title>
 
-      {/* Road mark — bottom navy rail */}
       <path
         d="M 4 39 C 14 30, 28 18, 58 7"
         stroke={NAVY}
@@ -41,7 +52,6 @@ export function RudowTransportLogo({ className = "", compact = false }: RudowTra
         strokeLinecap="round"
         fill="none"
       />
-      {/* Center lane (silver) */}
       <path
         d="M 7 36 C 17 26, 32 15, 60 9"
         stroke={SILVER}
@@ -49,7 +59,6 @@ export function RudowTransportLogo({ className = "", compact = false }: RudowTra
         strokeLinecap="round"
         fill="none"
       />
-      {/* Lane markers — navy rectangles */}
       <rect
         x="17"
         y="25"
@@ -77,7 +86,6 @@ export function RudowTransportLogo({ className = "", compact = false }: RudowTra
         fill={NAVY}
         transform="rotate(-42 37.5 13.4)"
       />
-      {/* Top navy rail */}
       <path
         d="M 11 31 C 22 18, 38 9, 64 4"
         stroke={NAVY}
@@ -85,7 +93,6 @@ export function RudowTransportLogo({ className = "", compact = false }: RudowTra
         strokeLinecap="round"
         fill="none"
       />
-      {/* Light swoosh — motion accent, lower-right of mark */}
       <path
         d="M 42 41 Q 54 26 64 14 L 60 16 Q 50 32 42 41 Z"
         fill={SWOOSH}
@@ -115,5 +122,30 @@ export function RudowTransportLogo({ className = "", compact = false }: RudowTra
         TRANSPORTATION
       </text>
     </svg>
+  );
+}
+
+export function RudowTransportLogo({
+  className = "",
+  compact = false,
+  priority = false,
+}: RudowTransportLogoProps) {
+  const [rasterFailed, setRasterFailed] = useState(false);
+
+  if (rasterFailed) {
+    return <RudowTransportLogoSvg className={className} compact={compact} />;
+  }
+
+  return (
+    <Image
+      src={RUDOW_TRANSPORT_LOGO}
+      alt="Rudow Transportation"
+      width={LOGO_NATURAL_W}
+      height={LOGO_NATURAL_H}
+      priority={priority}
+      sizes="(min-width: 768px) 280px, 230px"
+      className={`${logoImgClass} ${className}`.trim()}
+      onError={() => setRasterFailed(true)}
+    />
   );
 }
