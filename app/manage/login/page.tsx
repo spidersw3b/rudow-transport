@@ -2,11 +2,12 @@
 
 import { getSession, signIn } from "next-auth/react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import { RudowTransportLogo } from "@/components/layout/RudowTransportLogo";
 
 function LoginForm() {
+  const router = useRouter();
   const search = useSearchParams();
   const callbackUrl = search.get("callbackUrl") || "/manage";
   const err = search.get("error");
@@ -26,10 +27,13 @@ function LoginForm() {
       callbackUrl,
     });
     setLoading(false);
-    if (res?.error) {
+    if (res?.error || res?.ok === false) {
       setError("Invalid email or password.");
       return;
     }
+    // App Router: refresh so the session cookie is visible to getSession().
+    router.refresh();
+    await new Promise((r) => setTimeout(r, 150));
     const session = await getSession();
     const isAdmin = session?.user?.role === "admin";
     let next = res?.url ?? callbackUrl;
@@ -108,6 +112,17 @@ function LoginForm() {
           <Link className="font-semibold text-rt-blue hover:underline" href="/contact">
             Submit a request →
           </Link>
+        </p>
+        <p className="mt-6 border-t border-rt-gray-mid pt-4 text-center font-body text-xs text-rt-text-mid">
+          If sign-in always fails, your admin row may be missing in Supabase or env vars may be wrong
+          on the server. Open{" "}
+          <Link className="font-semibold text-rt-blue hover:underline" href="/api/health/auth?probe=1">
+            /api/health/auth?probe=1
+          </Link>{" "}
+          (JSON) to verify database connectivity, then run the admin seed in{" "}
+          <code className="rounded bg-rt-gray/80 px-1">lib/schema.sql</code> or{" "}
+          <code className="rounded bg-rt-gray/80 px-1">scripts/seed-brett-admin.sql</code> in the
+          Supabase SQL editor.
         </p>
       </div>
     </div>

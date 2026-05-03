@@ -109,16 +109,16 @@ CREATE TRIGGER transport_requests_updated_at
 --   EXECUTE PROCEDURE transport_requests_set_updated_at();
 
 -- -----------------------------------------------------------------------------
--- Optional seed admin — bcrypt cost 12. Replace HASH and email before run.
--- Re-run updates name, role, and password if email already exists.
+-- Seed admin (bcrypt cost 12). Re-run updates name, role, and password_hash.
+-- Change the password in production after first login (README).
 -- -----------------------------------------------------------------------------
 
 INSERT INTO users (email, name, role, password_hash)
 VALUES (
-  'kingbrett@rudowtransportation.net',
-  'King Brett',
+  'brett@rudowautomotive.com',
+  'Brett',
   'admin',
-  '$2a$12$LjcUzTa.TDx55GWcl8PIjOT1LopepzEj973M4YLxOGxAQCzCRkQcW'
+  '$2a$12$1s90tTJ7/vy9p0.qdKL5u.c5Jwg2IPR6Ph2mQBWdkY9n.DmnwoQO2'
 )
 ON CONFLICT (email) DO UPDATE
 SET
