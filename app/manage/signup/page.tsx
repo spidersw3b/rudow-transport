@@ -74,7 +74,7 @@ export default function ManageSignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-rt-navy px-4 py-16">
       <div className="w-full max-w-md rounded-sm border border-white/10 bg-white/95 p-8 shadow-xl">
         <div className="flex flex-col items-center text-center">
-          <RudowTransportLogo compact className="mx-auto h-10 w-full max-w-[220px]" />
+          <RudowTransportLogo className="mx-auto h-10 w-full max-w-[220px]" />
           <p className="mt-5 font-display text-sm font-bold uppercase tracking-[0.2em] text-rt-text-mid">
             Create customer account
           </p>

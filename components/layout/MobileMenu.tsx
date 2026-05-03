@@ -38,7 +38,7 @@ export function MobileMenu() {
           >
             <div className="flex items-center justify-between border-b border-rt-gray-mid px-4 py-4">
               <Link href="/" className="block max-w-[220px]" onClick={() => setOpen(false)}>
-                <RudowTransportLogo compact className="h-9 w-full" />
+                <RudowTransportLogo className="h-9 w-full" />
               </Link>
               <button
                 type="button"
