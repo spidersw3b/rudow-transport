@@ -1,5 +1,5 @@
--- Run once in Supabase → SQL Editor (password matches bcrypt cost 12).
--- Or locally: ADMIN_EMAIL=brett@rudowautomotive.com ADMIN_PASSWORD='…' node scripts/upsert-admin-user.cjs
+-- Run in Supabase → SQL Editor. Upserts admin brett@rudowautomotive.com (bcrypt cost 12).
+-- Or locally: ADMIN_PASSWORD='…' npm run seed:admin   (uses .env.local Supabase keys)
 
 INSERT INTO users (email, name, role, password_hash)
 VALUES (

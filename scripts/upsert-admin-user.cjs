@@ -2,7 +2,10 @@
  * Upsert an admin user (bcrypt password). Loads Supabase keys from .env.local.
  *
  * Usage:
+ *   ADMIN_PASSWORD='your-secret' npm run seed:admin
  *   ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='your-secret' node scripts/upsert-admin-user.cjs
+ *
+ * If ADMIN_EMAIL is omitted, defaults to brett@rudowautomotive.com.
  */
 const fs = require("fs");
 const path = require("path");
@@ -34,10 +37,10 @@ function loadEnvLocal() {
 }
 
 async function main() {
-  const email = process.env.ADMIN_EMAIL?.toLowerCase().trim();
+  const email = (process.env.ADMIN_EMAIL || "brett@rudowautomotive.com").toLowerCase().trim();
   const password = process.env.ADMIN_PASSWORD;
-  if (!email || !password) {
-    console.error("Set ADMIN_EMAIL and ADMIN_PASSWORD");
+  if (!password) {
+    console.error("Set ADMIN_PASSWORD (optional: ADMIN_EMAIL, defaults to brett@rudowautomotive.com)");
     process.exit(1);
   }
 

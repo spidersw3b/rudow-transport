@@ -43,25 +43,17 @@ Open [http://localhost:3000](http://localhost:3000).
 
    Set `NEXTAUTH_SECRET` and `NEXTAUTH_URL` (local: `http://localhost:3000`).
 
-2. Create the first **admin** user in Supabase (password hashed with bcrypt, cost 12):
+2. **Admin login:** Running `lib/schema.sql` (or `scripts/seed-brett-admin.sql`) creates or updates **`brett@rudowautomotive.com`** with role `admin` and a bcrypt password hash. Sign in at `/manage/login` with that email and password, then you are routed to `/admin/dashboard` (middleware requires `role = admin` for `/admin`).
+
+   To **set or rotate** the admin password using your local `.env.local` Supabase keys:
 
    ```bash
-   node -e "const b=require('bcryptjs');console.log(b.hashSync('yourpassword',12))"
+   ADMIN_PASSWORD='your-new-password' npm run seed:admin
    ```
 
-   Then in SQL:
+   Optional: `ADMIN_EMAIL=other@company.com` to target a different row.
 
-   ```sql
-   INSERT INTO users (email, name, role, password_hash)
-   VALUES (
-     'admin@rudowtransportation.net',
-     'Admin',
-     'admin',
-     '$2a$12$HASH_GENERATED_BY_BCRYPT'
-   );
-   ```
-
-3. Sign in at `/manage/login` with that email and password, then open `/admin/dashboard` (middleware enforces `role = admin` for `/admin`).
+3. If the admin row is missing or the password was changed in the database only, paste `scripts/seed-brett-admin.sql` into the Supabase SQL editor and run it, or use the `npm run seed:admin` command above.
 
 ## 5. Resend email setup
 

@@ -116,15 +116,16 @@ function LoginForm() {
           </Link>
         </p>
         <p className="mt-6 border-t border-rt-gray-mid pt-4 text-center font-body text-xs text-rt-text-mid">
-          If sign-in always fails, your admin row may be missing in Supabase or env vars may be wrong
-          on the server. Open{" "}
+          Admin accounts use the same sign-in. The seeded admin email is{" "}
+          <strong className="text-rt-text">brett@rudowautomotive.com</strong> (see{" "}
+          <code className="rounded bg-rt-gray/80 px-1">lib/schema.sql</code> /{" "}
+          <code className="rounded bg-rt-gray/80 px-1">scripts/seed-brett-admin.sql</code>
+          ). If sign-in fails, open{" "}
           <Link className="font-semibold text-rt-blue hover:underline" href="/api/health/auth?probe=1">
             /api/health/auth?probe=1
           </Link>{" "}
-          (JSON) to verify database connectivity, then run the admin seed in{" "}
-          <code className="rounded bg-rt-gray/80 px-1">lib/schema.sql</code> or{" "}
-          <code className="rounded bg-rt-gray/80 px-1">scripts/seed-brett-admin.sql</code> in the
-          Supabase SQL editor.
+          to verify database connectivity, then re-run the seed in the Supabase SQL editor or{" "}
+          <code className="rounded bg-rt-gray/80 px-1">ADMIN_PASSWORD=… npm run seed:admin</code> locally.
         </p>
       </div>
     </div>
