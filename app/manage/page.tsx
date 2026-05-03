@@ -85,7 +85,7 @@ export default function ManageDashboardPage() {
               onClick={() => signOut({ callbackUrl: "/" })}
               className="rounded-sm border border-rt-navy px-4 py-2 text-sm font-bold uppercase text-rt-navy hover:bg-rt-navy hover:text-white"
             >
-              Sign out
+              Log out
             </button>
           </div>
         </div>

@@ -3,7 +3,8 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogIn, Menu, X } from "lucide-react";
+import { LogIn, LogOut, Menu, X } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import { RudowTransportLogo } from "./RudowTransportLogo";
 
@@ -17,6 +18,8 @@ const links = [
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const authed = status === "authenticated" && !!session?.user;
 
   return (
     <div className="lg:hidden">
@@ -65,14 +68,28 @@ export function MobileMenu() {
                   </Link>
                 );
               })}
-              <Link
-                href="/manage/login"
-                onClick={() => setOpen(false)}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-sm border-2 border-black px-5 py-3 font-body text-sm font-semibold text-black"
-              >
-                <LogIn className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
-                Login
-              </Link>
+              {authed ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    void signOut({ callbackUrl: "/" });
+                  }}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-sm border-2 border-black px-5 py-3 font-body text-sm font-semibold text-black"
+                >
+                  <LogOut className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+                  Log out
+                </button>
+              ) : (
+                <Link
+                  href="/manage/login"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-sm border-2 border-black px-5 py-3 font-body text-sm font-semibold text-black"
+                >
+                  <LogIn className="h-5 w-5 shrink-0" strokeWidth={2} aria-hidden />
+                  Login
+                </Link>
+              )}
               <Link
                 href="/contact"
                 onClick={() => setOpen(false)}

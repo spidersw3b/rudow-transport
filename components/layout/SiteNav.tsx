@@ -1,8 +1,9 @@
 "use client";
 
-import { LogIn } from "lucide-react";
+import { LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import { MobileMenu } from "./MobileMenu";
 import { RudowTransportLogo } from "./RudowTransportLogo";
 
@@ -15,6 +16,8 @@ const links = [
 
 export function SiteNav() {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const authed = status === "authenticated" && !!session?.user;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-rt-gray-mid bg-white">
@@ -46,15 +49,28 @@ export function SiteNav() {
         </nav>
 
         <div className="flex items-center gap-2 lg:gap-3">
-          <Link
-            href="/manage/login"
-            className={`inline-flex shrink-0 items-center gap-2 rounded-sm border-2 border-black px-3 py-2 font-body text-sm font-semibold text-black transition-colors hover:bg-rt-gray focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
-              pathname.startsWith("/manage") ? "bg-rt-gray" : ""
-            }`}
-          >
-            <LogIn className="h-5 w-5 shrink-0 text-black" strokeWidth={2} aria-hidden />
-            Login
-          </Link>
+          {authed ? (
+            <button
+              type="button"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className={`inline-flex shrink-0 items-center gap-2 rounded-sm border-2 border-black px-3 py-2 font-body text-sm font-semibold text-black transition-colors hover:bg-rt-gray focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
+                pathname.startsWith("/manage") ? "bg-rt-gray" : ""
+              }`}
+            >
+              <LogOut className="h-5 w-5 shrink-0 text-black" strokeWidth={2} aria-hidden />
+              Log out
+            </button>
+          ) : (
+            <Link
+              href="/manage/login"
+              className={`inline-flex shrink-0 items-center gap-2 rounded-sm border-2 border-black px-3 py-2 font-body text-sm font-semibold text-black transition-colors hover:bg-rt-gray focus:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2 ${
+                pathname.startsWith("/manage") ? "bg-rt-gray" : ""
+              }`}
+            >
+              <LogIn className="h-5 w-5 shrink-0 text-black" strokeWidth={2} aria-hidden />
+              Login
+            </Link>
+          )}
           <Link
             href="/contact"
             className="hidden rounded-sm bg-rt-blue px-5 py-2 font-body text-sm font-bold uppercase tracking-wide text-white hover:bg-rt-blue-dark lg:inline-flex"
