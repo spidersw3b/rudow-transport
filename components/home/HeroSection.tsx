@@ -24,13 +24,13 @@ export function HeroSection() {
           transition={{ duration: 0.45, ease: "easeOut" }}
           className="max-w-xl"
         >
-          <h1 className="font-display text-4xl font-bold leading-tight text-rt-navy md:text-5xl lg:text-[64px] lg:leading-[1.05]">
+          <h1 className="font-display text-4xl font-bold leading-tight text-white drop-shadow-sm md:text-5xl lg:text-[64px] lg:leading-[1.05]">
             Move Freight Without Delays.
           </h1>
-          <h1 className="mt-1 font-display text-4xl font-bold leading-tight text-rt-navy md:text-5xl lg:text-[64px] lg:leading-[1.05]">
+          <h1 className="mt-1 font-display text-4xl font-bold leading-tight text-white drop-shadow-sm md:text-5xl lg:text-[64px] lg:leading-[1.05]">
             Without Guesswork.
           </h1>
-          <p className="mt-6 font-body text-base text-rt-text-mid md:text-lg">
+          <p className="mt-6 font-body text-base text-white drop-shadow-sm md:text-lg">
             From single-unit deliveries to full fleet transport, we move what matters—on time, every
             time.
           </p>

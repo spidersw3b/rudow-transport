@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
-import { RoadLogoMark } from "@/components/layout/RoadLogoMark";
+import { RudowTransportLogo } from "@/components/layout/RudowTransportLogo";
 
 const schema = z
   .object({
@@ -63,12 +63,8 @@ export default function ManageSignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-rt-navy px-4 py-16">
       <div className="w-full max-w-md rounded-sm border border-white/10 bg-white/95 p-8 shadow-xl">
         <div className="flex flex-col items-center text-center">
-          <RoadLogoMark className="h-12 w-12 text-rt-navy" />
-          <p className="mt-3 font-display text-2xl font-bold italic text-rt-navy">RUDOW</p>
-          <p className="font-body text-[11px] font-semibold uppercase tracking-[0.3em] text-rt-navy-mid">
-            Transportation
-          </p>
-          <p className="mt-4 font-display text-sm font-bold uppercase tracking-[0.2em] text-rt-text-mid">
+          <RudowTransportLogo compact className="mx-auto h-10 w-full max-w-[220px]" />
+          <p className="mt-5 font-display text-sm font-bold uppercase tracking-[0.2em] text-rt-text-mid">
             Create customer account
           </p>
         </div>

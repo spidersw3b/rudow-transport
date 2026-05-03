@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { RoadLogoMark } from "./RoadLogoMark";
+import { RudowTransportLogo } from "./RudowTransportLogo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -37,14 +37,8 @@ export function MobileMenu() {
             exit={{ opacity: 0 }}
           >
             <div className="flex items-center justify-between border-b border-rt-gray-mid px-4 py-4">
-              <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-                <RoadLogoMark className="h-9 w-9 text-rt-navy" />
-                <div className="leading-tight">
-                  <span className="block font-display text-xl font-bold italic text-rt-navy">RUDOW</span>
-                  <span className="block font-body text-[11px] font-semibold uppercase tracking-widest text-rt-navy-mid">
-                    Transportation
-                  </span>
-                </div>
+              <Link href="/" className="block max-w-[220px]" onClick={() => setOpen(false)}>
+                <RudowTransportLogo compact className="h-9 w-full" />
               </Link>
               <button
                 type="button"
@@ -76,7 +70,7 @@ export function MobileMenu() {
                 onClick={() => setOpen(false)}
                 className="mt-4 inline-flex w-full items-center justify-center rounded-sm bg-rt-blue px-5 py-3 font-body text-sm font-bold uppercase tracking-wide text-white"
               >
-                Contact
+                GET QUOTE
               </Link>
             </nav>
           </motion.div>

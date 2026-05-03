@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MobileMenu } from "./MobileMenu";
-import { RoadLogoMark } from "./RoadLogoMark";
+import { RudowTransportLogo } from "./RudowTransportLogo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -18,14 +18,11 @@ export function SiteNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-rt-gray-mid bg-white">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-6 lg:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-2">
-          <RoadLogoMark className="h-9 w-9 text-rt-navy md:h-10 md:w-10" />
-          <div className="leading-tight">
-            <span className="block font-display text-xl font-bold italic text-rt-navy md:text-2xl">RUDOW</span>
-            <span className="block font-body text-[10px] font-semibold uppercase tracking-[0.25em] text-rt-navy-mid md:text-[11px]">
-              Transportation
-            </span>
-          </div>
+        <Link
+          href="/"
+          className="block shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-rt-navy focus-visible:ring-offset-2"
+        >
+          <RudowTransportLogo />
         </Link>
 
         <nav className="hidden flex-1 justify-center gap-8 lg:flex">
@@ -52,7 +49,7 @@ export function SiteNav() {
             href="/contact"
             className="hidden rounded-sm bg-rt-blue px-5 py-2 font-body text-sm font-bold uppercase tracking-wide text-white hover:bg-rt-blue-dark lg:inline-flex"
           >
-            Contact
+            GET QUOTE
           </Link>
           <MobileMenu />
         </div>

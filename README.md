@@ -113,7 +113,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 - [ ] Submit a quote from `/contact` — confirm email at `dispatch@rudowtransportation.net`.
 - [ ] Create at least one **admin** user in Supabase.
-- [ ] Replace Unsplash placeholders under `lib/images.ts` with real assets in `/public/images` if desired.
+- [ ] Replace placeholder JPEGs in `public/images/` with final photography (see `public/images/README.md`).
 - [ ] Test **customer signup** and `/manage` dashboard.
 - [ ] Test **mobile** layouts (nav, admin sidebar, forms).
 - [ ] Click-test all nav links and CTAs.

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RudowTransportLogo } from "./RudowTransportLogo";
 
 const phone = process.env.NEXT_PUBLIC_PHONE || "7708861016";
 const phoneDisplay = "770-886-1016";
@@ -9,8 +10,10 @@ export function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 py-14 md:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="font-body text-lg font-normal text-rt-text-dark">Rudow Transportation</p>
-            <p className="mt-3 max-w-xs font-body text-sm text-rt-text-mid">
+            <Link href="/" className="inline-block max-w-[280px] focus:outline-none focus-visible:ring-2 focus-visible:ring-rt-navy focus-visible:ring-offset-2">
+              <RudowTransportLogo className="!h-10 md:!h-11" />
+            </Link>
+            <p className="mt-4 max-w-xs font-body text-sm text-rt-text-mid">
               Nationwide freight and fleet logistics built for reliability, scale, and precision.
             </p>
           </div>
