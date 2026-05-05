@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { apiError, apiOk } from "@/lib/api-response";
+import { mapSupabaseError } from "@/lib/db-guard";
 
 const createSchema = z.object({
   name: z.string().min(1),
@@ -16,8 +18,8 @@ const createSchema = z.object({
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (session?.user?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (session?.user?.role !== "admin" && session?.user?.role !== "super_admin") {
+      return apiError(403, "FORBIDDEN", "Only admins can view drivers.");
     }
 
     const supabase = getSupabaseAdmin();
@@ -26,25 +28,26 @@ export async function GET() {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ drivers: data ?? [] });
+    const mapped = mapSupabaseError(error);
+    if (mapped) return mapped;
+    return apiOk({ drivers: data ?? [] });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(500, "DRIVERS_GET_FAILED", message);
   }
 }
 
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (session?.user?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (session?.user?.role !== "admin" && session?.user?.role !== "super_admin") {
+      return apiError(403, "FORBIDDEN", "Only admins can create drivers.");
     }
 
     const body = await req.json();
     const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+      return apiError(400, "VALIDATION_ERROR", "Invalid request body.", parsed.error.flatten());
     }
 
     const supabase = getSupabaseAdmin();
@@ -57,10 +60,11 @@ export async function POST(req: Request) {
       .select("*")
       .single();
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ driver: data });
+    const mapped = mapSupabaseError(error);
+    if (mapped) return mapped;
+    return apiOk({ driver: data }, { status: 201 });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(500, "DRIVER_CREATE_FAILED", message);
   }
 }

@@ -61,6 +61,7 @@ export default function AdminDriversPage() {
               <th className="px-4 py-3">Expiry</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Assignment</th>
+              <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y">
@@ -74,6 +75,18 @@ export default function AdminDriversPage() {
                   <StatusBadge status={String(d.status)} />
                 </td>
                 <td className="px-4 py-3 text-xs text-rt-text-mid">{d.current_assignment ? "Assigned" : "—"}</td>
+                <td className="px-4 py-3 text-right">
+                  <button
+                    type="button"
+                    className="text-xs font-semibold uppercase text-red-700"
+                    onClick={async () => {
+                      const res = await fetch(`/api/drivers/${d.id}`, { method: "DELETE" });
+                      if (res.ok) void load();
+                    }}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

@@ -13,7 +13,7 @@ export default withAuth(
     const path = req.nextUrl.pathname;
 
     if (path.startsWith("/admin")) {
-      if (token?.role !== "admin") {
+      if (token?.role !== "admin" && token?.role !== "super_admin") {
         const url = new URL("/manage/login", req.url);
         url.searchParams.set("callbackUrl", path);
         url.searchParams.set("error", "AdminOnly");

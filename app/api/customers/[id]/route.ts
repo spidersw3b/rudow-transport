@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (session?.user?.role !== "admin") {
+    if (session?.user?.role !== "admin" && session?.user?.role !== "super_admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -27,7 +27,7 @@ export async function GET(
     }
 
     const { data: requests } = await supabase
-      .from("transport_requests")
+      .from("requests")
       .select("*")
       .eq("user_id", id)
       .order("created_at", { ascending: false });

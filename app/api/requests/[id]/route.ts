@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { apiError, apiOk } from "@/lib/api-response";
+import { mapSupabaseError } from "@/lib/db-guard";
 
 const updateSchema = z.object({
   status: z.string().optional(),
@@ -14,6 +16,7 @@ const updateSchema = z.object({
   destination: z.string().optional().nullable(),
   customer_notes: z.string().optional().nullable(),
   admin_notes: z.string().optional().nullable(),
+  request_metadata: z.record(z.any()).optional(),
 });
 
 export async function GET(
@@ -23,30 +26,30 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return apiError(401, "UNAUTHORIZED", "Authentication required.");
     }
 
     const { id } = params;
     const supabase = getSupabaseAdmin();
 
     const { data, error } = await supabase
-      .from("transport_requests")
+      .from("requests")
       .select("*")
       .eq("id", id)
       .maybeSingle();
 
-    if (error || !data) {
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    }
+    const mapped = mapSupabaseError(error);
+    if (mapped) return mapped;
+    if (!data) return apiError(404, "NOT_FOUND", "Request not found.");
 
     if (session.user.role !== "admin" && data.user_id !== session.user.id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      return apiError(403, "FORBIDDEN", "You do not have access to this request.");
     }
 
-    return NextResponse.json({ request: data });
+    return apiOk({ request: data });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(500, "REQUEST_GET_FAILED", message);
   }
 }
 
@@ -56,34 +59,33 @@ export async function PUT(
 ) {
   try {
     const session = await getServerSession(authOptions);
-    if (session?.user?.role !== "admin") {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (session?.user?.role !== "admin" && session?.user?.role !== "super_admin") {
+      return apiError(403, "FORBIDDEN", "Only admins can update requests.");
     }
 
     const { id } = params;
     const body = await req.json();
     const parsed = updateSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+      return apiError(400, "VALIDATION_ERROR", "Invalid request body.", parsed.error.flatten());
     }
 
     const supabase = getSupabaseAdmin();
     const updates = { ...parsed.data, updated_at: new Date().toISOString() };
 
     const { data, error } = await supabase
-      .from("transport_requests")
+      .from("requests")
       .update(updates)
       .eq("id", id)
       .select("*")
       .single();
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const mapped = mapSupabaseError(error);
+    if (mapped) return mapped;
 
-    return NextResponse.json({ request: data });
+    return apiOk({ request: data });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(500, "REQUEST_UPDATE_FAILED", message);
   }
 }

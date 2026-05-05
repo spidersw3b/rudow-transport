@@ -17,6 +17,8 @@ export default function ManageDashboardPage() {
   const [rows, setRows] = useState<TransportRequest[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [active, setActive] = useState<TransportRequest | null>(null);
+  const [docUploading, setDocUploading] = useState(false);
+  const [docMessage, setDocMessage] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/requests");
@@ -42,6 +44,34 @@ export default function ManageDashboardPage() {
       delivered: rows.filter((r) => r.status === "Delivered").length,
     };
   }, [rows]);
+
+  async function submitDocument(file: File, requestId: string) {
+    setDocMessage(null);
+    setDocUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const uploadRes = await fetch("/api/upload?purpose=quote", { method: "POST", body: formData });
+      const uploadData = await uploadRes.json();
+      if (!uploadRes.ok) throw new Error(uploadData.error?.message ?? uploadData.error ?? "Upload failed");
+      const docRes = await fetch("/api/reports/documents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          request_id: requestId,
+          file_url: uploadData.url,
+          file_name: file.name,
+        }),
+      });
+      const docData = await docRes.json();
+      if (!docRes.ok) throw new Error(docData.error?.message ?? docData.error ?? "Submission failed");
+      setDocMessage("Document submitted to operations.");
+    } catch (submitError) {
+      setDocMessage(submitError instanceof Error ? submitError.message : "Document submission failed");
+    } finally {
+      setDocUploading(false);
+    }
+  }
 
   if (status === "loading") {
     return (
@@ -75,7 +105,7 @@ export default function ManageDashboardPage() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/contact"
+              href="/quote"
               className="rounded-sm bg-rt-blue px-4 py-2 text-sm font-bold uppercase text-white hover:bg-rt-blue-dark"
             >
               New request
@@ -110,6 +140,39 @@ export default function ManageDashboardPage() {
               }}
             />
           </div>
+        </div>
+        <div className="mt-10 rounded-sm border border-rt-gray-mid bg-white p-5">
+          <h3 className="font-display text-lg font-bold text-rt-navy">Submit supporting documents</h3>
+          <p className="mt-1 text-sm text-rt-text-mid">Attach customer-side files to a specific request.</p>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <select
+              className="rounded-sm border px-3 py-2 text-sm"
+              onChange={(e) => {
+                const selected = rows.find((row) => row.id === e.target.value) ?? null;
+                setActive(selected);
+              }}
+              value={active?.id ?? ""}
+            >
+              <option value="">Select a request</option>
+              {rows.map((row) => (
+                <option key={row.id} value={row.id}>
+                  {row.request_id}
+                </option>
+              ))}
+            </select>
+            <input
+              type="file"
+              accept="image/*,application/pdf"
+              disabled={!active || docUploading}
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file && active) {
+                  void submitDocument(file, active.id);
+                }
+              }}
+            />
+          </div>
+          {docMessage ? <p className="mt-3 text-sm text-rt-text-mid">{docMessage}</p> : null}
         </div>
       </div>
       <RequestViewModal open={modalOpen} request={active} onClose={() => setModalOpen(false)} />

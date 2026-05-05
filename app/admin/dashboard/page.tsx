@@ -45,7 +45,8 @@ export default function AdminDashboardPage() {
     const pending = rows.filter((r) => r.status === "Pending").length;
     const inTransit = rows.filter((r) => r.status === "In Transit").length;
     const delivered = rows.filter((r) => r.status === "Delivered").length;
-    return { total, pending, inTransit, delivered };
+    const delayed = rows.filter((r) => r.status === "Delayed").length;
+    return { total, pending, inTransit, delivered, delayed };
   }, [rows]);
 
   return (
@@ -117,6 +118,7 @@ export default function AdminDashboardPage() {
         pending={stats.pending}
         inTransit={stats.inTransit}
         delivered={stats.delivered}
+        delayed={stats.delayed}
       />
 
       <div>

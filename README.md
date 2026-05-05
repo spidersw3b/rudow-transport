@@ -22,6 +22,41 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Production transport stack setup
+
+### Local run
+- `npm install`
+- `cp .env.example .env.local`
+- populate env vars
+- `npm run dev`
+
+### Auth setup
+- Credentials auth is backed by the `users` table (`email`, `password_hash`, `role`).
+- Supported roles: `customer`, `admin`, `super_admin`.
+- `/admin/*` requires `admin` or `super_admin`.
+- Only `super_admin` can create admin users and persist settings.
+
+### Supabase setup
+- Run `scripts/supabase-admin-full.sql` in Supabase SQL editor.
+- Ensure `uploads` storage bucket exists for quote and document uploads.
+- Server APIs use `SUPABASE_SERVICE_ROLE_KEY` via `lib/supabase-admin.ts`.
+- If tables are missing, APIs return `SETUP_REQUIRED` guidance.
+
+### Seed super_admin flow
+- Insert a super admin directly in Supabase:
+  ```sql
+  INSERT INTO users (email, name, role, password_hash)
+  VALUES ('ops@rudowautomotive.com', 'Operations Admin', 'super_admin', '<bcrypt hash>');
+  ```
+- Use bcrypt with cost 12 for generated hashes.
+- Sign in at `/manage/login`, then access `/admin/dashboard`.
+
+### Troubleshooting
+- `401 UNAUTHORIZED`: verify session cookie + `NEXTAUTH_SECRET`.
+- `403 FORBIDDEN`: verify role (`admin` or `super_admin`) in `users.role`.
+- `SETUP_REQUIRED`: run `scripts/supabase-admin-full.sql`.
+- Upload failures: verify `uploads` bucket exists and service-role key is valid.
+
 ## 3. Supabase setup
 
 1. Create a project at [supabase.com](https://supabase.com).

@@ -22,7 +22,7 @@ const main = [
   { href: "/admin/requests", label: "Requests", icon: FileText, children: [{ href: "/admin/requests", label: "All requests" }] },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/drivers", label: "Drivers", icon: UserCheck },
-  { href: "/admin/fleet", label: "Fleet", icon: Truck },
+  { href: "/admin/transport", label: "Transport", icon: Truck },
   { href: "/admin/routes", label: "Routes", icon: Navigation },
   { href: "/admin/reports", label: "Reports", icon: BarChart2 },
   { href: "/admin/settings", label: "Settings", icon: Settings },

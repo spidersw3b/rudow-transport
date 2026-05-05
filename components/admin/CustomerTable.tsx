@@ -9,6 +9,7 @@ export type CustomerRow = {
   company: string | null;
   phone: string | null;
   created_at: string;
+  request_count?: number;
 };
 
 export function CustomerTable({ rows }: { rows: CustomerRow[] }) {
@@ -21,6 +22,7 @@ export function CustomerTable({ rows }: { rows: CustomerRow[] }) {
             <th className="px-4 py-3">Email</th>
             <th className="px-4 py-3">Company</th>
             <th className="px-4 py-3">Phone</th>
+            <th className="px-4 py-3">Requests</th>
             <th className="px-4 py-3">Joined</th>
             <th className="px-4 py-3 text-right">View</th>
           </tr>
@@ -32,6 +34,7 @@ export function CustomerTable({ rows }: { rows: CustomerRow[] }) {
               <td className="px-4 py-3 text-rt-text-mid">{r.email}</td>
               <td className="px-4 py-3 text-rt-text-mid">{r.company || "—"}</td>
               <td className="px-4 py-3 text-rt-text-mid">{r.phone || "—"}</td>
+              <td className="px-4 py-3 text-rt-text-mid">{r.request_count ?? 0}</td>
               <td className="whitespace-nowrap px-4 py-3 text-rt-text-mid">
                 {new Date(r.created_at).toLocaleDateString()}
               </td>

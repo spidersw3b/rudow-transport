@@ -1,10 +1,13 @@
-export type UserRole = "admin" | "customer";
+export type UserRole = "customer" | "admin" | "super_admin";
 
 export type RequestStatus =
   | "Pending"
   | "Accepted"
+  | "Planned"
+  | "Dispatched"
   | "In Transit"
   | "Delivered"
+  | "Delayed"
   | "Cancelled";
 
 export type Priority = "Low" | "Medium" | "High";
@@ -71,6 +74,7 @@ export interface TransportRequest {
   estimated_completion: string | null;
   customer_notes: string | null;
   admin_notes: string | null;
+  request_metadata?: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 }

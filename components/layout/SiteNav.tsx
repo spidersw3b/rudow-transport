@@ -9,6 +9,7 @@ import { RudowTransportLogo } from "./RudowTransportLogo";
 
 const links = [
   { href: "/", label: "Home" },
+  { href: "/upfit", label: "Upfit" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About us" },
   { href: "/contact", label: "Contact" },

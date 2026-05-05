@@ -5,52 +5,58 @@ import { authOptions } from "@/lib/auth";
 import { generateTransportRequestId } from "@/lib/request-id";
 import { sendDispatchEmail } from "@/lib/resend";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { apiError, apiOk } from "@/lib/api-response";
+import { mapSupabaseError } from "@/lib/db-guard";
 
 const createSchema = z.object({
-  customer_email: z.string().email(),
-  customer_name: z.string().optional(),
-  phone: z.string().optional(),
-  company: z.string().optional(),
+  customer_email: z.string().email("Provide a valid email."),
+  customer_name: z.string().min(1, "Name is required."),
+  phone: z.string().min(1, "Phone is required."),
+  company: z.string().optional().nullable(),
   service_type: z.string().min(1),
-  vehicle_description: z.string().optional(),
-  origin_location: z.string().optional(),
-  destination: z.string().optional(),
-  special_instructions: z.string().optional(),
+  vehicle_description: z.string().optional().nullable(),
+  origin_location: z.string().min(1),
+  destination: z.string().min(1),
+  special_instructions: z.string().min(1),
   photo_url: z.string().url().optional().nullable(),
-  customer_notes: z.string().optional(),
+  customer_notes: z.string().optional().nullable(),
+  priority: z.enum(["Standard", "Expedited", "Flexible"]).optional(),
+  request_metadata: z.record(z.any()).optional(),
 });
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return apiError(401, "UNAUTHORIZED", "Authentication required.");
     }
 
     const supabase = getSupabaseAdmin();
     const role = session.user.role;
 
-    if (role === "admin") {
+    if (role === "admin" || role === "super_admin") {
       const { data, error } = await supabase
-        .from("transport_requests")
+        .from("requests")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-      return NextResponse.json({ requests: data ?? [] });
+      const mapped = mapSupabaseError(error);
+      if (mapped) return mapped;
+      return apiOk({ requests: data ?? [] });
     }
 
     const { data, error } = await supabase
-      .from("transport_requests")
+      .from("requests")
       .select("*")
       .eq("user_id", session.user.id)
       .order("created_at", { ascending: false });
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ requests: data ?? [] });
+    const mapped = mapSupabaseError(error);
+    if (mapped) return mapped;
+    return apiOk({ requests: data ?? [] });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(500, "REQUESTS_GET_FAILED", message);
   }
 }
 
@@ -60,7 +66,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input", details: parsed.error.flatten() }, { status: 400 });
+      return apiError(400, "VALIDATION_ERROR", "Invalid request body.", parsed.error.flatten());
     }
 
     const supabase = getSupabaseAdmin();
@@ -78,22 +84,22 @@ export async function POST(req: Request) {
       vehicle_description: parsed.data.vehicle_description ?? null,
       origin_location: parsed.data.origin_location ?? null,
       destination: parsed.data.destination ?? null,
-      special_instructions: parsed.data.special_instructions ?? null,
+      special_instructions: parsed.data.special_instructions,
       photo_url: parsed.data.photo_url ?? null,
       customer_notes: parsed.data.customer_notes ?? null,
       status: "Pending",
-      priority: "Medium",
+      priority: parsed.data.priority ?? "Standard",
+      request_metadata: parsed.data.request_metadata ?? {},
     };
 
     const { data, error } = await supabase
-      .from("transport_requests")
+      .from("requests")
       .insert(row)
       .select("*")
       .single();
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const mapped = mapSupabaseError(error);
+    if (mapped) return mapped;
 
     const html = `
       <h2>New transport request ${request_id}</h2>
@@ -115,9 +121,9 @@ export async function POST(req: Request) {
       /* email optional in dev */
     }
 
-    return NextResponse.json({ request: data });
+    return apiOk({ request: data }, { status: 201 });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Error";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return apiError(500, "REQUEST_CREATE_FAILED", message);
   }
 }
