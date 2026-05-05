@@ -15,12 +15,6 @@ if (supabaseUrl) {
   }
 }
 
-remotePatterns.push({
-  protocol: "https",
-  hostname: "images.unsplash.com",
-  pathname: "/**",
-});
-
 const nextConfig = {
   images: {
     remotePatterns,
