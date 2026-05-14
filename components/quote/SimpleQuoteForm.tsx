@@ -1,5 +1,6 @@
 "use client";
 
+/** Rudow Automotive — single-page transport quote for /quote (variant: simple). */
 import { AlertCircle, ArrowRight, Camera, CheckCircle, Loader2, Upload, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";

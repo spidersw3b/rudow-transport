@@ -9,7 +9,9 @@ export function QuoteFormVariantPanel() {
     <div className="mb-8 rounded-sm border border-rt-gray-mid bg-white p-5">
       <div className="mb-5 border-b-2 border-rt-gray pb-3">
         <h3 className="font-display text-[15px] font-bold uppercase tracking-wider text-rt-navy">Quote form</h3>
-        <p className="mt-1 font-body text-xs text-rt-text-mid">Choose which quote form visitors see on the /quote page.</p>
+        <p className="mt-1 font-body text-xs text-rt-text-mid">
+          Rudow Automotive public site — which form visitors see on <code className="rounded bg-rt-gray px-1">/quote</code>.
+        </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">

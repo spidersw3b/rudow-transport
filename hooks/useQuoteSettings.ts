@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Loads `quote_form_variant` from Supabase `rudow_site_settings` (anon read),
+ * with GET /api/quote-form-variant as fallback. Saves via PUT (NextAuth admin).
+ * Rudow Automotive public site + admin console.
+ */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createBrowserSupabaseClient } from "@/lib/supabase";
 
@@ -37,7 +42,7 @@ export function useQuoteSettings() {
     let next: QuoteFormVariant = "simple";
     try {
       const supabase = createBrowserSupabaseClient();
-      const { data, error } = await supabase.from("ste_site_settings").select("value").eq("key", SETTINGS_KEY).maybeSingle();
+      const { data, error } = await supabase.from("rudow_site_settings").select("value").eq("key", SETTINGS_KEY).maybeSingle();
       if (!error && data?.value != null && data.value !== "") {
         next = data.value === "multi-step" ? "multi-step" : "simple";
       } else {

@@ -152,7 +152,7 @@ export async function POST(req: Request) {
 
     const html = isSimple
       ? `
-      <h2>New transport request ${request_id} (simple quote form)</h2>
+      <h2>New transport request ${request_id} (Rudow simple quote)</h2>
       <p><strong>Email:</strong> ${(parsed.data as z.infer<typeof simpleCreateSchema>).customer_email}</p>
       <p><strong>Name:</strong> ${(parsed.data as z.infer<typeof simpleCreateSchema>).customer_name || "—"}</p>
       <p><strong>Service interest:</strong> ${(parsed.data as z.infer<typeof simpleCreateSchema>).service_interest || "—"}</p>

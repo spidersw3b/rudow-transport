@@ -13,11 +13,11 @@ function normalizeVariant(value: string | null | undefined): "simple" | "multi-s
   return value === "multi-step" ? "multi-step" : "simple";
 }
 
-/** Public: which quote form /quote should show (defaults to simple if row missing). */
+/** Rudow Automotive — public read of which /quote form variant is active. */
 export async function GET() {
   try {
     const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase.from("ste_site_settings").select("value").eq("key", VARIANT_KEY).maybeSingle();
+    const { data, error } = await supabase.from("rudow_site_settings").select("value").eq("key", VARIANT_KEY).maybeSingle();
     if (error) {
       return apiOk({ variant: "simple" as const });
     }
@@ -31,7 +31,7 @@ const putSchema = z.object({
   variant: z.enum(["simple", "multi-step"]),
 });
 
-/** Admin: persist variant (NextAuth — not Supabase Auth). */
+/** Rudow Automotive admin: persist quote form variant (`rudow_site_settings`). */
 export async function PUT(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -43,7 +43,7 @@ export async function PUT(req: Request) {
       return apiError(400, "VALIDATION_ERROR", "Invalid request body.", parsed.error.flatten());
     }
     const supabase = getSupabaseAdmin();
-    const { error } = await supabase.from("ste_site_settings").upsert(
+    const { error } = await supabase.from("rudow_site_settings").upsert(
       { key: VARIANT_KEY, value: parsed.data.variant, updated_at: new Date().toISOString() },
       { onConflict: "key" }
     );
