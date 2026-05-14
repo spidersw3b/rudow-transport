@@ -16,9 +16,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file" }, { status: 400 });
     }
 
-    const maxBytes = 2 * 1024 * 1024;
+    const maxBytes = purpose === "quote" ? 8 * 1024 * 1024 : 2 * 1024 * 1024;
     if (file.size > maxBytes) {
-      return NextResponse.json({ error: "File must be 2 MB or less" }, { status: 400 });
+      return NextResponse.json(
+        { error: purpose === "quote" ? "File must be 8 MB or less" : "File must be 2 MB or less" },
+        { status: 400 }
+      );
     }
 
     let prefix: string;

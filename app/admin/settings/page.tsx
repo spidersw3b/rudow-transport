@@ -1,5 +1,6 @@
- "use client";
+"use client";
 
+import { QuoteFormVariantPanel } from "@/components/admin/QuoteFormVariantPanel";
 import { useEffect, useState } from "react";
 
 export default function AdminSettingsPage() {
@@ -18,6 +19,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="max-w-2xl space-y-4">
+      <QuoteFormVariantPanel />
       <h1 className="font-display text-2xl font-bold text-rt-navy">Settings</h1>
       <p className="font-body text-sm text-rt-text-mid">Read-only for admin. Super admins can persist operational defaults.</p>
       <div className="rounded-sm border border-rt-gray-mid bg-white p-4">
